@@ -21,9 +21,9 @@ export const TodoItem: React.FC<Props> = ({
       data-cy="Todo"
       className={clsx('todo', { completed: todoItem.completed })}
     >
-      <label className="todo__status-label" htmlFor={todoItem.id + 't'}>
+      <label className="todo__status-label" htmlFor={String(todoItem.id)}>
         <input
-          id={todoItem.id + 't'}
+          id={String(todoItem.id)}
           data-cy="TodoStatus"
           type="checkbox"
           className={clsx('todo__status')}

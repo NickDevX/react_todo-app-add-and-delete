@@ -9,7 +9,7 @@ import React, {
 } from 'react';
 import { UserWarning } from './UserWarning';
 import { addTodo, deleteTodo, getTodos, USER_ID } from './api/todos';
-import { Todo } from './types/Todo';
+import { Todo, Filter } from './types/Todo';
 import { Header } from './components/Header';
 import { TodoList } from './components/TodoList';
 import { Footer } from './components/Footer';
@@ -21,7 +21,7 @@ export const App: React.FC = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [tempTodo, setTempTodo] = useState<Todo | null>(null);
   const [deletingTodoId, setDeletingTodoId] = useState<number[] | null>(null);
-  const [filter, setFilter] = useState('all');
+  const [filter, setFilter] = useState(Filter.All);
   const [title, setTitle] = useState('');
   const [loadingError, setLoadingError] = useState({
     queryError: false,
@@ -71,13 +71,14 @@ export const App: React.FC = () => {
   );
 
   const filterTodos = useCallback((todosList: Todo[], filterBy: string) => {
-    if (filterBy === 'active') {
-      return todosList.filter(item => !item.completed);
-    } else if (filterBy === 'completed') {
-      return todosList.filter(item => item.completed);
+    switch (filterBy) {
+      case Filter.Active:
+        return todosList.filter(item => !item.completed);
+      case Filter.Completed:
+        return todosList.filter(item => item.completed);
+      default:
+        return todosList;
     }
-
-    return todosList;
   }, []);
 
   const visibleTodos = useMemo(
@@ -91,7 +92,7 @@ export const App: React.FC = () => {
 
   const handleClick = (
     event: React.MouseEvent<HTMLAnchorElement>,
-    filterBy: string,
+    filterBy: Filter,
   ) => {
     event.preventDefault();
     setFilter(filterBy);
