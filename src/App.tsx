@@ -10,7 +10,10 @@ import React, {
 import { UserWarning } from './UserWarning';
 import { addTodo, deleteTodo, getTodos, USER_ID } from './api/todos';
 import { Todo } from './types/Todo';
-import clsx from 'clsx';
+import { Header } from './components/Header';
+import { TodoList } from './components/TodoList';
+import { Footer } from './components/Footer';
+import { ErrorNotification } from './components';
 
 export const App: React.FC = () => {
   const input = useRef<HTMLInputElement>(null);
@@ -234,212 +237,47 @@ export const App: React.FC = () => {
   }
 
   return (
-    <div className={clsx('todoapp')}>
-      <h1 className={clsx('todoapp__title')}>todos</h1>
-      <div className={clsx('todoapp__content')}>
-        <header className={clsx('todoapp__header')}>
-          {todos.length > 0 && (
-            <button
-              type="button"
-              className={clsx('todoapp__toggle-all', {
-                active: todos.every(item => item.completed),
-              })}
-              data-cy="ToggleAllButton"
-              onClick={complateAllTodo}
-            />
-          )}
-          <form onSubmit={handleSubmit} method="post">
-            <input
-              data-cy="NewTodoField"
-              type="text"
-              value={title}
-              ref={input}
-              onChange={handleTitleChange}
-              disabled={tempTodo !== null}
-              className={clsx('todoapp__new-todo')}
-              placeholder="What needs to be done?"
-            />
-          </form>
-        </header>
+    <div className="todoapp">
+      <h1 className="todoapp__title">todos</h1>
+      <div className="todoapp__content">
+        <Header
+          {...{
+            todos,
+            title,
+            input,
+            tempTodo,
+            handleTitleChange,
+            handleSubmit,
+            complateAllTodo,
+          }}
+        />
 
-        <section className={clsx('todoapp__main')} data-cy="TodoList">
-          {visibleTodos.map(todoItem => (
-            <div
-              data-cy="Todo"
-              className={clsx('todo', { completed: todoItem.completed })}
-              key={todoItem.id}
-            >
-              <label className={clsx('todo__status-label')}>
-                <input
-                  data-cy="TodoStatus"
-                  type="checkbox"
-                  className={clsx('todo__status')}
-                  checked={todoItem.completed}
-                  onChange={() => complateTodo(todoItem.id)}
-                />
-              </label>
-              <span data-cy="TodoTitle" className={clsx('todo__title')}>
-                {todoItem.title}
-              </span>
-              <button
-                type="button"
-                className={clsx('todo__remove')}
-                data-cy="TodoDelete"
-                onClick={() => removeTodo(todoItem.id)}
-              >
-                ×
-              </button>
-              <div
-                data-cy="TodoLoader"
-                className={clsx('modal', 'overlay', {
-                  'is-active': deletingTodoId?.includes(todoItem.id),
-                })}
-              >
-                <div
-                  className={clsx(
-                    'modal-background',
-                    'has-background-white-ter',
-                  )}
-                />
-                <div className={clsx('loader')} />
-              </div>
-            </div>
-          ))}
-          {tempTodo && (
-            <div
-              data-cy="Todo"
-              className={clsx('todo', { completed: tempTodo.completed })}
-              key={tempTodo.id}
-            >
-              <label className={clsx('todo__status-label')}>
-                <input
-                  data-cy="TodoStatus"
-                  type="checkbox"
-                  className={clsx('todo__status')}
-                  checked={tempTodo.completed}
-                  onChange={() => complateTodo(tempTodo.id)}
-                />
-              </label>
-              <span data-cy="TodoTitle" className={clsx('todo__title')}>
-                {tempTodo.title}
-              </span>
-              <button
-                type="button"
-                className={clsx('todo__remove')}
-                data-cy="TodoDelete"
-                onClick={() => removeTodo(tempTodo.id)}
-              >
-                ×
-              </button>
-              <div
-                data-cy="TodoLoader"
-                className={clsx('modal', 'overlay', {
-                  'is-active': tempTodo,
-                })}
-              >
-                <div
-                  className={clsx(
-                    'modal-background',
-                    'has-background-white-ter',
-                  )}
-                />
-                <div className={clsx('loader')} />
-              </div>
-            </div>
-          )}
+        <section className="todoapp__main" data-cy="TodoList">
+          <TodoList
+            {...{
+              visibleTodos,
+              tempTodo,
+              deletingTodoId,
+              removeTodo,
+              complateTodo,
+            }}
+          />
         </section>
 
         {todos.length > 0 && (
-          <footer className={clsx('todoapp__footer')} data-cy="Footer">
-            <span className={clsx('todo-count')} data-cy="TodosCounter">
-              {todos.filter(item => !item.completed).length} items left
-            </span>
-            <nav className={clsx('filter')} data-cy="Filter">
-              <a
-                href="#/"
-                className={clsx('filter__link', {
-                  selected: filter === 'all',
-                })}
-                data-cy="FilterLinkAll"
-                onClick={event => handleClick(event, 'all')}
-              >
-                All
-              </a>
-              <a
-                href="#/active"
-                className={clsx('filter__link', {
-                  selected: filter === 'active',
-                })}
-                data-cy="FilterLinkActive"
-                onClick={event => handleClick(event, 'active')}
-              >
-                Active
-              </a>
-              <a
-                href="#/completed"
-                className={clsx('filter__link', {
-                  selected: filter === 'completed',
-                })}
-                data-cy="FilterLinkCompleted"
-                onClick={event => handleClick(event, 'completed')}
-              >
-                Completed
-              </a>
-            </nav>
-            <button
-              type="button"
-              className={clsx('todoapp__clear-completed')}
-              data-cy="ClearCompletedButton"
-              onClick={removeCompletedTodos}
-              disabled={!checkTodoCompleted() && todos.length > 0}
-            >
-              Clear completed
-            </button>
-          </footer>
+          <Footer
+            {...{
+              todos,
+              filter,
+              checkTodoCompleted,
+              removeCompletedTodos,
+              handleClick,
+            }}
+          />
         )}
       </div>
-      <div
-        data-cy="ErrorNotification"
-        className={clsx(
-          'notification',
-          'is-danger',
-          'is-light',
-          'has-text-weight-normal',
-          { hidden: !anyExistingError },
-        )}
-      >
-        <button
-          data-cy="HideErrorButton"
-          type="button"
-          className={clsx('delete')}
-          onClick={clearError}
-        />
-        {loadingError.todosError && (
-          <>
-            Unable to load todos
-            <br />
-          </>
-        )}
-        {loadingError.queryError && (
-          <>
-            Title should not be empty
-            <br />
-          </>
-        )}
-        {loadingError.addError && (
-          <>
-            Unable to add a todo
-            <br />
-          </>
-        )}
-        {loadingError.deleteError && (
-          <>
-            Unable to delete a todo
-            <br />
-          </>
-        )}
-        {loadingError.updateError && 'Unable to update a todo'}
-      </div>
+
+      <ErrorNotification {...{ anyExistingError, clearError, loadingError }} />
     </div>
   );
 };
