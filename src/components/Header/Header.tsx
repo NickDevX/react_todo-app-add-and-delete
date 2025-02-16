@@ -1,4 +1,4 @@
-import clsx from 'clsx';
+import clsx from '../../../node_modules/clsx';
 import { Todo } from '../../types/Todo';
 import React from 'react';
 

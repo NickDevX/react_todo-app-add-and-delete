@@ -37,6 +37,7 @@ export const TodoList: React.FC<Props> = ({
             removeTodo,
             complateTodo,
             deletingTodoId,
+            isTemp: true,
           }}
         />
       )}

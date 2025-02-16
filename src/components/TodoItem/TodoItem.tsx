@@ -6,6 +6,7 @@ type Props = {
   removeTodo: (id: number) => void;
   complateTodo: (id: number) => void;
   deletingTodoId: number[] | null;
+  isTemp?: boolean;
 };
 
 export const TodoItem: React.FC<Props> = ({
@@ -13,12 +14,12 @@ export const TodoItem: React.FC<Props> = ({
   removeTodo,
   complateTodo,
   deletingTodoId,
+  isTemp = false,
 }) => {
   return (
     <div
       data-cy="Todo"
       className={clsx('todo', { completed: todoItem.completed })}
-      key={todoItem.id}
     >
       <label className="todo__status-label" htmlFor={todoItem.id + 't'}>
         <input
@@ -44,7 +45,7 @@ export const TodoItem: React.FC<Props> = ({
       <div
         data-cy="TodoLoader"
         className={clsx('modal', 'overlay', {
-          'is-active': deletingTodoId?.includes(todoItem.id),
+          'is-active': isTemp || deletingTodoId?.includes(todoItem.id),
         })}
       >
         <div className={clsx('modal-background', 'has-background-white-ter')} />
